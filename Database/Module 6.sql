@@ -1,0 +1,119 @@
+								-- 2. Subquery 
+                                
+SELECT *
+FROM EMPLOYEES
+WHERE SALARY < ( SELECT SALARY
+				FROM EMPLOYEES
+				WHERE EMPLOYEE_ID = 144
+				);
+                
+SELECT *
+FROM EMPLOYEES
+WHERE SALARY = ( SELECT MAX(SALARY)
+				FROM EMPLOYEES
+				);
+                
+SELECT *
+FROM EMPLOYEES
+WHERE DEPARTMENT_ID = (SELECT DEPARTMENT_ID
+						FROM DEPARTMENTS
+						WHERE DEPARTMENT_NAME = 'MARKETING'
+						);
+                        
+SELECT AVG(SALARY)
+FROM EMPLOYEES
+WHERE DEPARTMENT_ID = (SELECT DEPARTMENT_ID
+						FROM DEPARTMENTS
+						WHERE DEPARTMENT_NAME = 'MARKETING'
+						);     
+                        
+SELECT COUNT(*)
+FROM EMPLOYEES
+WHERE DEPARTMENT_ID = (SELECT DEPARTMENT_ID
+						FROM DEPARTMENTS
+						WHERE DEPARTMENT_NAME = 'IT'
+						);   
+      
+SELECT SUM(SALARY)
+FROM EMPLOYEES
+WHERE JOB_ID = (SELECT JOB_ID
+				FROM JOBS
+				WHERE JOB_TITLE = 'PROGRAMMER'
+				);
+		
+------------------------------------------------------------------------------------------------------------------------------------
+											-- 3. Advanced Subquery 
+     
+-- NON VALID WAY
+
+SELECT *
+FROM EMPLOYEES
+WHERE SALARY = (SELECT DISTINCT SALARY
+				FROM EMPLOYEES
+				ORDER BY SALARY DESC
+				LIMIT 1
+				OFFSET 1
+				);
+                
+-- VALID WAY
+
+SELECT *
+FROM EMPLOYEES
+WHERE SALARY = (SELECT MAX(SALARY)
+				FROM EMPLOYEES
+				WHERE SALARY < (SELECT MAX(SALARY) FROM EMPLOYEES )
+				);
+                
+SELECT *
+FROM EMPLOYEES AS EMP
+WHERE SALARY > (SELECT SALARY
+				FROM EMPLOYEES AS MNG
+				WHERE EMP.MANAGER_ID = MNG.EMPLOYEE_ID
+                );
+
+SELECT *
+FROM EMPLOYEES AS EMP
+WHERE JOB_ID = (SELECT JOB_ID
+				FROM EMPLOYEES AS MNG
+				WHERE EMP.MANAGER_ID = MNG.EMPLOYEE_ID
+                );
+
+SELECT DEPARTMENT_ID , (SELECT DEPARTMENT_NAME FROM DEPARTMENTS D WHERE E.DEPARTMENT_ID = D.DEPARTMENT_ID) AS DEPARTMENT_NAME , AVG(SALARY) AS AVERAGE_SALARY 
+FROM EMPLOYEES E
+GROUP BY E.DEPARTMENT_ID
+HAVING AVG(E.SALARY) > (SELECT AVG(SALARY) FROM EMPLOYEES );
+
+------------------------------------------------------------------------------------------------------
+							-- 4 Common Table Expressions (WITH AS)
+
+SELECT *
+FROM EMPLOYEES
+LIMIT 5;
+
+WITH TEMP AS
+(
+	SELECT *
+	FROM EMPLOYEES
+	LIMIT 5
+)
+
+SELECT *
+FROM TEMP;
+
+------------------------------------------------------------------------------------------------------
+						-- 5. Example of Common Table Expressions
+
+WITH AVGIT AS                        
+(
+	SELECT AVG(SALARY) AS SAL1
+	FROM EMPLOYEES
+	WHERE DEPARTMENT_ID = 60 -- IT     
+),MAXMKT AS
+(
+	SELECT MAX(SALARY) AS SAL2
+	FROM EMPLOYEES
+	WHERE DEPARTMENT_ID = 20  -- MARKETING                
+)
+SELECT *
+FROM EMPLOYEES
+WHERE SALARY > (SELECT SAL1 FROM AVGIT) AND SALARY < ( SELECT SAL2 FROM MAXMKT);

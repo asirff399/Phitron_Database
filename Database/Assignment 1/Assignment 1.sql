@@ -1,0 +1,74 @@
+-- NO 1-2
+
+
+-- TABLE A 
+
+CREATE TABLE STUDENT(
+   Roll CHAR(4) PRIMARY KEY,
+   Name VARCHAR(50) NOT NULL,
+   Email VARCHAR(100) UNIQUE,
+   Adress VARCHAR(250),
+   Age int CHECK(Age > 10)
+);
+
+-- TABLE B 
+
+CREATE TABLE LIBRARY(
+	Library_id CHAR(4) PRIMARY KEY,
+    Books VARCHAR(100) UNIQUE,
+    Student_Roll CHAR(4) UNIQUE,
+    FOREIGN KEY(Student_Roll) REFERENCES STUDENT(Roll)
+);
+
+-- TABLE C 
+
+CREATE TABLE FEES(
+	Fees_id CHAR(4) PRIMARY KEY,
+    Students_Roll CHAR(4) UNIQUE,
+    Monthly_Fees FLOAT ,
+    Books_Fees FLOAT,
+    Library_fine FLOAT,
+    Total_Fees FLOAT NOT NULL,
+    FOREIGN KEY(Students_Roll) REFERENCES STUDENT(Roll)
+);
+
+-- NO 4
+
+SET SQL_SAFE_UPDATES = 0;
+-- Update and Delete query
+SET SQL_SAFE_UPDATES = 1;
+
+-- NO 5
+
+SELECT DISTINCT department
+FROM EMPLOYEE ;
+
+-- NO 6
+
+SELECT LastName
+FROM EMLOYEE
+ORDER BY Age DESC;
+
+-- NO 7
+
+SELECT LastName
+FROM EMPLOYEE
+WHERE (Age>30) AND DEPARTMENT = 'Marketing';
+
+-- NO 8
+
+SELECT * 
+FROM EMPLOYEE;
+
+-- NO 9
+
+SELECT *
+FROM EMPLOYEE
+WHERE FastName LIKE '%son%' OR LastName LIKE '%son%';
+
+-- NO 10
+
+SELECT *
+FROM EMPLOYEE
+WHERE DEPARTMENT = 'Engineering';
+
